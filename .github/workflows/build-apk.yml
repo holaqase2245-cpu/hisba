@@ -1,1 +1,48 @@
 
+name: Build Flutter APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Hisba project
+        run: unzip -o hisba_android_fixed_v4.zip
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        working-directory: hisba_android
+        run: flutter pub get
+
+      - name: Build APK
+        working-directory: hisba_android
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hisba-release-apk
+          path: hisba_android/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
