@@ -1,4 +1,3 @@
-
 name: Build Flutter APK
 
 on:
@@ -31,6 +30,10 @@ jobs:
         with:
           channel: stable
           cache: true
+
+      - name: Create Android project
+        working-directory: hisba_android
+        run: flutter create --platforms=android .
 
       - name: Get dependencies
         working-directory: hisba_android
